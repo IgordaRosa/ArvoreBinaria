@@ -60,11 +60,45 @@ class MinhaArvoreDeBuscaBinaria : public ArvoreDeBuscaBinaria<T>
         return nodo;
     };
 
+    Nodo<T> * FilhoQueContem(Nodo<T> * nodoPai, T chave) const
+    {
+        if(nodoPai->chave == chave)
+        {
+            return nodoPai;
+        
+        }
+        else if(nodoPai->filhoEsquerda != nullptr and nodoPai->filhoEsquerda->chave == chave)
+        {
+            return nodoPai->filhoEsquerda;
+        }
+        else if(nodoPai->filhoDireita != nullptr and nodoPai->filhoDireita->chave == chave)
+        {
+            return nodoPai->filhoDireita;
+        }
+        return nodoPai;
+    };
+
     public:
     ///////////////////////////////////////////////////////////////////////
+    protected:
+    void destruir(Nodo<T> * nodo) const
+    {
+        if(nodo == nullptr)
+        {
+            return;
+        }
+            destruir(nodo->filhoEsquerda);
+            destruir(nodo->filhoDireita);
+
+            delete nodo;
+    };
+
+    public:
     ~MinhaArvoreDeBuscaBinaria() override
     {
-
+        destruir(NodoRaiz);
+        NodoRaiz = nullptr;
+        delete NodoRaiz;
     };
 
     ///////////////////////////////////////////////////////////////////////
@@ -103,8 +137,6 @@ class MinhaArvoreDeBuscaBinaria : public ArvoreDeBuscaBinaria<T>
     };
 
     ///////////////////////////////////////////////////////////////////////
-
-    public:
     /**
      * @brief Verifica se a arvore contem uma chave
      * @param chave chave a ser procurada na arvore
@@ -205,7 +237,7 @@ class MinhaArvoreDeBuscaBinaria : public ArvoreDeBuscaBinaria<T>
             Nodo<T> * novoNodo = new Nodo<T>();
             novoNodo->chave = chave;
             novoNodo->altura = 0;
-            delete NodoRaiz;
+            //delete NodoRaiz;
             NodoRaiz = novoNodo;
             return;
         }
@@ -220,52 +252,43 @@ class MinhaArvoreDeBuscaBinaria : public ArvoreDeBuscaBinaria<T>
         {
             return;
         }
-        Nodo<T> * nodo;
-        if(nodoPai->chave == chave)
-        {
-            if(nodoPai->filhoEsquerda == nullptr and nodoPai->filhoDireita == nullptr)
+        Nodo<T> * nodo = FilhoQueContem(nodoPai, chave);
+
+        if(nodoPai->filhoEsquerda == nullptr and nodoPai->filhoDireita == nullptr)
             {
                 nodoPai = nullptr;
                 delete nodoPai;
                 return;
             }
-            nodo = nodoPai;
-        }
-        else if(nodoPai->filhoEsquerda != nullptr and nodoPai->filhoEsquerda->chave == chave)
-        {
-            nodo = nodoPai->filhoEsquerda;
-            if(nodo->filhoEsquerda == nullptr and nodo->filhoDireita == nullptr)
+    
+        else if(nodoPai->filhoEsquerda == nodo and nodo->filhoEsquerda == nullptr and nodo->filhoDireita == nullptr)
             {
                 nodoPai->filhoEsquerda = nullptr;
                 delete nodo;
                 return;
             }
-        }
-        else if(nodoPai->filhoDireita != nullptr and nodoPai->filhoDireita->chave == chave)
-        {
-            nodo = nodoPai->filhoDireita;
-            if(nodo->filhoEsquerda == nullptr and nodo->filhoDireita == nullptr)
+
+        else if(nodoPai->filhoDireita == nodo and nodo->filhoEsquerda == nullptr and nodo->filhoDireita == nullptr)
             {
                 nodoPai->filhoDireita = nullptr;
                 delete nodo;
                 return;
             }
-        }
+        
 
-        if(nodo != nullptr and nodo->filhoDireita != nullptr)
+        if(nodo->filhoDireita != nullptr)
         {
             Nodo<T> * aux = nodo->filhoDireita;
-            Nodo<T> * auxPai = nodo;
+            nodoPai = nodo;
             while(aux->filhoEsquerda != nullptr)
             {
-                auxPai = aux;
+                nodoPai = aux;
                 aux = aux->filhoEsquerda;
             }
             nodo->chave = aux->chave;
             aux->chave = chave;
-            this->rem(auxPai, chave);
+            this->rem(nodoPai, chave);
         }
-        return;
     };
 
     public:
@@ -276,7 +299,8 @@ class MinhaArvoreDeBuscaBinaria : public ArvoreDeBuscaBinaria<T>
      */        
     void remover(T chave) override
     {
-        if(NodoRaiz->chave == chave and\
+        if(!vazia() and\
+        NodoRaiz->chave == chave and\
         NodoRaiz->filhoEsquerda == nullptr and\
         NodoRaiz->filhoDireita == nullptr)
         {
@@ -291,8 +315,6 @@ class MinhaArvoreDeBuscaBinaria : public ArvoreDeBuscaBinaria<T>
     };
 
     ///////////////////////////////////////////////////////////////////////
-    
-    public:
     /**
      * @brief Busca a chave do filho a esquerda de uma (sub)arvore
      * @param chave chave da arvore que eh pai do filho a esquerda
@@ -309,8 +331,6 @@ class MinhaArvoreDeBuscaBinaria : public ArvoreDeBuscaBinaria<T>
     };
 
     ///////////////////////////////////////////////////////////////////////
-    
-    public:
     /**
      * @brief Busca a chave do filho a direita de uma (sub)arvore
      * @param chave chave da arvore que eh pai do filho a direita
