@@ -19,7 +19,6 @@ class MinhaArvoreDeBuscaBinaria : public ArvoreDeBuscaBinaria<T>
     -criar outro metodo pra chamar a recursividade
     -
 
-
     */
     protected:
 
@@ -97,8 +96,6 @@ class MinhaArvoreDeBuscaBinaria : public ArvoreDeBuscaBinaria<T>
     ~MinhaArvoreDeBuscaBinaria() override
     {
         destruir(NodoRaiz);
-        NodoRaiz = nullptr;
-        delete NodoRaiz;
     };
 
     ///////////////////////////////////////////////////////////////////////
@@ -195,34 +192,68 @@ class MinhaArvoreDeBuscaBinaria : public ArvoreDeBuscaBinaria<T>
     protected:
     void inse(Nodo<T> * nodo, T chave) const
     {   
-        if(chave < nodo->chave)
+        while(nodo != nullptr and\
+        nodo->filhoEsquerda != nullptr and\
+        nodo->filhoDireita != nullptr)
         {
-            if(nodo->filhoEsquerda == nullptr)
+            if(nodo->chave < chave)
             {
-                Nodo<T> * novoNodo = new Nodo<T>();
-                novoNodo->chave = chave;
-                novoNodo->altura = nodo->altura + 1;
-                nodo->filhoEsquerda = novoNodo;
+                nodo = nodo->filhoDireita;
             }
             else
             {
-                inse(nodo->filhoEsquerda, chave);
+                nodo = nodo->filhoEsquerda;
             }
+        }
+        if(nodo == nullptr)
+        {
+            return;
+        }
+        if(chave < nodo->chave)
+        {
+            Nodo<T> * novoNodo = new Nodo<T>();
+            novoNodo->chave = chave;
+            novoNodo->altura = nodo->altura + 1;
+            nodo->filhoEsquerda = novoNodo;
         }
         else
         {
-            if(nodo->filhoDireita == nullptr)
-            {
-                Nodo<T> * novoNodo = new Nodo<T>();
-                novoNodo->chave = chave;
-                novoNodo->altura = nodo->altura + 1;
-                nodo->filhoDireita = novoNodo;
-            }
-            else
-            {
-                inse(nodo->filhoDireita, chave);
-            }
+            Nodo<T> * novoNodo = new Nodo<T>();
+            novoNodo->chave = chave;
+            novoNodo->altura = nodo->altura + 1;
+            nodo->filhoDireita = novoNodo;
         }
+
+
+
+        // if(chave < nodo->chave)
+        // {
+        //     if(nodo->filhoEsquerda == nullptr)
+        //     {
+        //         Nodo<T> * novoNodo = new Nodo<T>();
+        //         novoNodo->chave = chave;
+        //         novoNodo->altura = nodo->altura + 1;
+        //         nodo->filhoEsquerda = novoNodo;
+        //     }
+        //     else
+        //     {
+        //         inse(nodo->filhoEsquerda, chave);
+        //     }
+        // }
+        // else
+        // {
+        //     if(nodo->filhoDireita == nullptr)
+        //     {
+        //         Nodo<T> * novoNodo = new Nodo<T>();
+        //         novoNodo->chave = chave;
+        //         novoNodo->altura = nodo->altura + 1;
+        //         nodo->filhoDireita = novoNodo;
+        //     }
+        //     else
+        //     {
+        //         inse(nodo->filhoDireita, chave);
+        //     }
+        // }
     };
 
     public:
@@ -237,11 +268,10 @@ class MinhaArvoreDeBuscaBinaria : public ArvoreDeBuscaBinaria<T>
             Nodo<T> * novoNodo = new Nodo<T>();
             novoNodo->chave = chave;
             novoNodo->altura = 0;
-            //delete NodoRaiz;
             NodoRaiz = novoNodo;
             return;
         }
-        inse(this->NodoRaiz, chave);    
+        inse(NodoRaiz, chave);    
     };
 
     ///////////////////////////////////////////////////////////////////////
@@ -299,13 +329,12 @@ class MinhaArvoreDeBuscaBinaria : public ArvoreDeBuscaBinaria<T>
      */        
     void remover(T chave) override
     {
-        if(!vazia() and\
-        NodoRaiz->chave == chave and\
+        if(NodoRaiz->chave == chave and\
         NodoRaiz->filhoEsquerda == nullptr and\
         NodoRaiz->filhoDireita == nullptr)
         {
-            NodoRaiz = nullptr;
             delete NodoRaiz;
+            NodoRaiz = nullptr;
             return;
         }
         if(contem(chave))

@@ -5,7 +5,7 @@
 #include <stdexcept>
 
 class posicao_invalida_exception : public std::exception
-{
+{ 
 	virtual const char* what() const throw()
   	{
     	return "Posicao invalida na lista encadeada";

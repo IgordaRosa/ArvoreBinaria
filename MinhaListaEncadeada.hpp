@@ -78,7 +78,7 @@ class MinhaListaEncadeada :  public ListaEncadeadaAbstrata<T>
     };
 
     void adicionaNaPosicao(T umDado, int umaPosicao)
-    {
+    { 
         if(umaPosicao < 0 or umaPosicao > getTamanho())
         {
             throw posicao_invalida_exception();

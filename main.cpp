@@ -149,7 +149,7 @@ TEST(ArvoreBinariaBuscaTest, Remocao)
     ASSERT_EQ(arvore->quantidade(), 5);
     ASSERT_TRUE(!arvore->filhoDireitaDe(7));
     ASSERT_TRUE(!arvore->filhoEsquerdaDe(7));
-    
+     
     //Testa remover raiz
     arvore->inserir(6);
     arvore->inserir(9);

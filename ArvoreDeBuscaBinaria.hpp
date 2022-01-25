@@ -5,7 +5,7 @@
 #include <optional>
 
 template<typename T>
-struct Nodo
+struct Nodo 
 {
     T chave;
     int altura{0};
